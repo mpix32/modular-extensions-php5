@@ -12,8 +12,7 @@ if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
  * Modular Extensions - PHP5
  *
  * Adapted from the CodeIgniter Core Classes
- * @copyright	Copyright (c) 2006, EllisLab, Inc.
- * @link		http://codeigniter.com
+ * @link	http://codeigniter.com
  *
  * Description:
  * This library replaces the CodeIgniter Controller class
@@ -22,7 +21,7 @@ if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
  * Install this file as application/libraries/Controller.php
  *
  * @copyright	Copyright (c) Wiredesignz 2009-09-12
- * @version		5.2.18
+ * @version 	5.2.18
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

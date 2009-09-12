@@ -7,8 +7,7 @@ spl_autoload_register('Modules::autoload');
  * Modular Extensions - PHP5
  *
  * Adapted from the CodeIgniter Core Classes
- * @copyright	Copyright (c) 2006, EllisLab, Inc.
- * @link		http://codeigniter.com
+ * @link	http://codeigniter.com
  *
  * Description:
  * This library provides functions to load and instantiate controllers
@@ -17,7 +16,7 @@ spl_autoload_register('Modules::autoload');
  * Install this file as application/libraries/Modules.php
  *
  * @copyright	Copyright (c) Wiredesignz 2009-09-12
- * @version		5.2.18
+ * @version 	5.2.18
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
