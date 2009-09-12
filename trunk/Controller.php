@@ -22,7 +22,7 @@ if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
  * Install this file as application/libraries/Controller.php
  *
  * @copyright	Copyright (c) Wiredesignz 2009-09-12
- * @version		5.2.17
+ * @version		5.2.18
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
