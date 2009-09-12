@@ -21,7 +21,7 @@ if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright 	Copyright (c) Wiredesignz 2009-09-12
+ * @copyright	Copyright (c) Wiredesignz 2009-09-12
  * @version		5.2.17
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -97,9 +97,9 @@ class MX_Loader extends CI_Loader
 		$this->_module = CI::$APP->router->fetch_module();
 		
 		/* ci loader references */
-        foreach (get_class_vars('CI_Loader') as $var => $val) {
-        	$this->$var =& CI::$APP->load->$var;
-        }
+		foreach (get_class_vars('CI_Loader') as $var => $val) {
+			$this->$var =& CI::$APP->load->$var;
+ 		}
 	}
 	
 	/** Load a module config file **/
@@ -217,7 +217,7 @@ class MX_Loader extends CI_Loader
 		if ($path === FALSE) {		
 			parent::_ci_load_class($library, $params, $object_name);
 			$_alias = $this->_ci_classes[$class];
-     	} else {		
+		} else {		
 			Modules::load_file($_library, $path);
 			$library = ucfirst($_library);
 			CI::$APP->$_alias = new $library($params);
