@@ -378,6 +378,8 @@ class MX_Loader extends CI_Loader
 
 class Controller
 {			
+	public $autoload;
+	
 	/** PHP4 compatibility **/
 	public function Controller() {
 		
@@ -396,8 +398,7 @@ class Controller
 		Modules::$registry[$class] = $this;		
 		
 		/* autoload module items */
-		$autoload = isset($this->autoload) ? $this->autoload : array();
-		$this->load->_ci_autoloader($autoload);
+		$this->load->_ci_autoloader($this->autoload);
 	}
 		
 	protected function __get($var) {
