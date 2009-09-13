@@ -72,7 +72,7 @@ class Modules
 	
 	/** Load a module controller **/
 	public static function load($module) {
-		(is_array($module)) AND list($module, $params) = each($module) OR $params = NULL;	
+		(is_array($module)) ? list($module, $params) = each($module) : $params = NULL;	
 		
 		/* get the controller class name */
 		$class = strtolower(end(explode('/', $module)));
