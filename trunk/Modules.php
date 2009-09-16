@@ -3,6 +3,11 @@
 /* PHP5 spl_autoload */
 spl_autoload_register('Modules::autoload');
 
+/* load the module sub-directories list */
+if (is_file($location = APPPATH.'config/modules.php')) {
+	Modules::$dirs = include $location;
+}
+
 /**
  * Modular Extensions - PHP5
  *
@@ -38,8 +43,8 @@ spl_autoload_register('Modules::autoload');
  **/
 
 class Modules
-{	
-	public static $registry = array();
+{
+	public static $registry = array(), $dirs = array();
 	
 	/**
 	* Run a module controller method
@@ -153,10 +158,10 @@ class Modules
 	
 		$path = $base;
 		($subpath) AND $subpath .= '/';
-		
+	
 		/* set the module path(s) to search */
-		$modules = ($module) ? array(MODBASE.$module.'/') : array();
-		
+		$modules = ($module) ? array(MODBASE.$module.'/') : self::$dirs;
+	
 		/* $subpath is a module dir? or is a sub-directory */
 		if (is_dir(MODBASE.$subpath.$base)) {
 			$modules[] = MODBASE.$subpath;

@@ -3,7 +3,7 @@
 /* load the modules library */
 include 'Modules.php';
 
-/* autoload controller base classes if available */
+/* load controller base classes if available */
 if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
 	include_once $location;
 }
@@ -20,8 +20,8 @@ if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-09-12
- * @version 	5.2.18
+ * @copyright	Copyright (c) Wiredesignz 2009-09-15
+ * @version 	5.2.19
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -75,15 +75,10 @@ class CI extends CI_Base
 		/* autoload application items */
 		$this->load->_ci_autoloader();
 	}
-	
-	public static function instance() {
-		is_a(self::$APP, __CLASS__) OR new CI();
-		return self::$APP;
-	}
 }
 
 /* create the application object */
-CI::instance();
+new CI();
 
 class MX_Loader extends CI_Loader
 {	
@@ -314,7 +309,7 @@ class MX_Loader extends CI_Loader
 	}
 	
 	/** Autload items **/
-	public function _ci_autoloader($autoload = array(), $path = FALSE) {		
+	public function _ci_autoloader($autoload, $path = FALSE) {		
 		
 		if ($this->_module)
 			list($path, $file) = Modules::find('autoload', $this->_module, 'config/');
@@ -378,7 +373,7 @@ class MX_Loader extends CI_Loader
 
 class Controller
 {			
-	public $autoload;
+	public $autoload = array();
 	
 	/** PHP4 compatibility **/
 	public function Controller() {
