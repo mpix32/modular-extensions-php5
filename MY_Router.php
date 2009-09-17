@@ -60,8 +60,7 @@ class MY_Router extends CI_Router
 		$this->directory = '';
 		
 		/* pad the segment array */
-		$_segments = array_merge($segments, array(NULL, NULL));
-		list($module, $directory, $controller) = $_segments;
+		list($module, $directory, $controller) = array_pad($segments, 3, NULL);
 	
 		/* module exists? */
 		if ($module AND is_dir($source = MODBASE.$module.'/controllers/')) {
