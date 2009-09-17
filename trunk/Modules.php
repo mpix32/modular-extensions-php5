@@ -3,11 +3,6 @@
 /* PHP5 spl_autoload */
 spl_autoload_register('Modules::autoload');
 
-/* load the module sub-directories list */
-if (is_file($location = APPPATH.'config/modules.php')) {
-	Modules::$dirs = include $location;
-}
-
 /**
  * Modular Extensions - PHP5
  *
@@ -20,8 +15,8 @@ if (is_file($location = APPPATH.'config/modules.php')) {
  *
  * Install this file as application/libraries/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-09-12
- * @version 	5.2.18
+ * @copyright	Copyright (c) Wiredesignz 2009-09-15
+ * @version 	5.2.19
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +39,7 @@ if (is_file($location = APPPATH.'config/modules.php')) {
 
 class Modules
 {
-	public static $registry = array(), $dirs = array();
+	public static $registry = array();
 	
 	/**
 	* Run a module controller method
@@ -160,10 +155,10 @@ class Modules
 		($subpath) AND $subpath .= '/';
 	
 		/* set the module path(s) to search */
-		$modules = ($module) ? array(MODBASE.$module.'/') : self::$dirs;
+		$modules = ($module) ? array(MODBASE.$module.'/') : array();
 	
-		/* $subpath is a module dir? or is a sub-directory */
-		if (is_dir(MODBASE.$subpath.$base)) {
+		/* cross load from a module? or a sub-directory */
+		if ($subpath AND is_dir(MODBASE.$subpath.$base)) {
 			$modules[] = MODBASE.$subpath;
 		} else {
 			$path .= $subpath;

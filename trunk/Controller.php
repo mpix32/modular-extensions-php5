@@ -1,6 +1,6 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');		
 
-/* load the modules library */
+/* load the modules class */
 include 'Modules.php';
 
 /* load controller base classes if available */
@@ -304,7 +304,7 @@ class MX_Loader extends CI_Loader
 
 	public function _ci_is_instance() {}
 
-	protected function __get($var) {
+	public function __get($var) {
 		return CI::$APP->$var;
 	}
 	
@@ -396,7 +396,7 @@ class Controller
 		$this->load->_ci_autoloader($this->autoload);
 	}
 		
-	protected function __get($var) {
+	public function __get($var) {
 		return CI::$APP->$var;
 	}
 }
