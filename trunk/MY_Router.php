@@ -85,7 +85,7 @@ class MY_Router extends CI_Router
 				}
 
 				/* module sub-directory controller exists? */
-				if( ! $controller AND is_file($module_subdir.'/'.$directory.EXT)) {
+				if(is_file($module_subdir.'/'.$directory.EXT)) {
 					return array_slice($segments, 1);
 				}
 			}
