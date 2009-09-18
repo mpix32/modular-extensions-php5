@@ -3,10 +3,8 @@
 /* load the modules class */
 include 'Modules.php';
 
-/* load controller base classes if available */
-if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
-	include_once $location;
-}
+/* load the core loader class */
+include BASEPATH.'libraries/Loader.php';
 
 /**
  * Modular Extensions - PHP5
@@ -21,7 +19,7 @@ if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
  * Install this file as application/libraries/Controller.php
  *
  * @copyright	Copyright (c) Wiredesignz 2009-09-15
- * @version 	5.2.19
+ * @version 	5.2.20
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +52,7 @@ class CI extends CI_Base
 		self::$APP = $this;
 		
 		/* assign the core loader */
-		$this->load = load_class('Loader');
+		$this->load = new CI_Loader();
 		
 		/* the core classes */
 		$classes = array(
@@ -80,7 +78,7 @@ class CI extends CI_Base
 /* create the application object */
 new CI();
 
-class MX_Loader extends CI_Loader
+class Loader extends CI_Loader
 {	
 	private $_module;
 	
@@ -378,13 +376,11 @@ class Controller
 	/** PHP4 compatibility **/
 	public function Controller() {
 		
-		/* set the loader */
-		$this->load = new MX_Loader();
+		/* use the MX_Loader extension if it exists */
+		$this->load = (class_exists('MX_Loader', FALSE)) ? new MX_Loader() : new Loader();
 		
 		/* reset the application loader */
-		if( ! is_a(CI::$APP->load, 'MX_Loader')) {
-			CI::$APP->load = $this->load;
-		}
+		(is_a(CI::$APP->load, 'Loader')) OR CI::$APP->load = $this->load;
 		
 		$class = strtolower(get_class($this));
 		log_message('debug', ucfirst($class)." Controller Initialized");
@@ -399,4 +395,14 @@ class Controller
 	public function __get($var) {
 		return CI::$APP->$var;
 	}
+}
+
+/* load MX_Loader extension classes if available */
+if (is_file($location = APPPATH.'libraries/MX_Loader'.EXT)) {
+	include_once $location;
+}
+
+/* load MX_Controller extension classes if available */
+if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
+	include_once $location;
 }
