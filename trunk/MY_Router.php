@@ -18,7 +18,7 @@ define('MODOFFSET', '../modules/');
  * Install this file as application/libraries/MY_Router.php
  *
  * @copyright	Copyright (c) Wiredesignz 2009-09-15
- * @version 	5.2.19
+ * @version 	5.2.20
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,12 +74,12 @@ class MY_Router extends CI_Router
 			}
 				
 			/* module sub-directory exists? */
-			if($directory AND is_dir($module_subdir = $source.$directory)) {
+			if($directory AND is_dir($module_subdir = $source.$directory.'/')) {
 						
 				$this->directory .= $directory.'/';
 			
 				/* module sub-directory sub-controller exists? */
-				if($controller AND is_file($module_subdir.'/'.$controller.EXT))	{
+				if($controller AND is_file($module_subdir.$controller.EXT))	{
 					return array_slice($segments, 2);
 				}
 
