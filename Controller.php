@@ -1,10 +1,10 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');		
 
 /* load the modules class */
-include 'Modules.php';
+require 'Modules'.EXT;
 
 /* load the core loader class */
-include BASEPATH.'libraries/Loader.php';
+require BASEPATH.'libraries/Loader'.EXT;
 
 /**
  * Modular Extensions - PHP5
@@ -18,7 +18,7 @@ include BASEPATH.'libraries/Loader.php';
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-09-15
+ * @copyright	Copyright (c) Wiredesignz 2009-09-21
  * @version 	5.2.20
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -74,9 +74,6 @@ class CI extends CI_Base
 		$this->load->_ci_autoloader();
 	}
 }
-
-/* create the application object */
-new CI();
 
 class Loader extends CI_Loader
 {	
@@ -391,7 +388,7 @@ class Controller
 		/* autoload module items */
 		$this->load->_ci_autoloader($this->autoload);
 	}
-		
+	
 	public function __get($var) {
 		return CI::$APP->$var;
 	}
@@ -406,3 +403,6 @@ if (is_file($location = APPPATH.'libraries/MX_Loader'.EXT)) {
 if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
 	include_once $location;
 }
+
+/* create the application object */
+$APP = new CI();
