@@ -114,15 +114,12 @@ class Modules
 		$file = str_replace(EXT, '', $file);		
 		$location = $path.$file.EXT;
 		
-		if ($type === 'other') {		
-			
+		if ($type === 'other') {			
 			if (class_exists($file, FALSE))	{
 				log_message('debug', "File already loaded: {$location}");				
 				return $result;
-			}
-			
+			}	
 			include_once $location;
-		
 		} else { 
 		
 			/* load config or language array */
@@ -145,37 +142,32 @@ class Modules
 	**/
 	public static function find($file, $module, $base, $subpath = NULL) {
 		
-		/* is subpath in filename? */
+		/* is there a path in the filename? */
 		if (($pos = strrpos($file, '/')) !== FALSE) {
 			$subpath = substr($file, 0, $pos);
 			$file = substr($file, $pos + 1);
 	    }
-	
-		$path = $base;
-		($subpath) AND $subpath .= '/';
-	
-		/* set the module path(s) to search */
-		$modules = ($module) ? array(MODBASE.$module.'/') : array();
-	
-		/* cross load from a module? or a sub-directory */
-		if ($subpath AND is_dir(MODBASE.$subpath.$base)) {
-			$modules[] = MODBASE.$subpath;
-		} else {
-			$path .= $subpath;
-		}
 		
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);
 				
-		/* find the file */
-		foreach ($modules as $source) {
-			if (is_file($source.$path.$file_ext)) return array($source.$path, $file);
+		/* set the module to search */
+		$modules = ($module AND $module .= '/') ? array(MODBASE.$module) : array();		
+		
+		/* cross load from a module if it exists */
+		if ($subpath AND $subpath .= '/' AND is_dir(MODBASE.$subpath)) {
+				$modules[] = MODBASE.$subpath;
 		}
 		
-		/* look in the application directory for views or models */
+		/* find the file */
+		foreach ($modules as $source) {
+			if (is_file($source.$base.$subpath.$file_ext)) return array($source.$base.$subpath, $file);
+		}
+	
+		/* look in application directories for views or models */
 		if ($base == 'views/' OR $base == 'models/') {
-			if (is_file(APPPATH.$path.$file_ext)) return array(APPPATH.$path, $file);
-			show_error("Unable to locate the file: {$file_ext} in {$module}/{$path}");
+			if (is_file(APPPATH.$base.$subpath.$file_ext)) return array(APPPATH.$base.$subpath, $file);
+			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}");
 		}
 		
 		return array(FALSE, $file);	
