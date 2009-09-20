@@ -171,7 +171,7 @@ class Modules
 		/* look in application directories for views or models */
 		if ($base.$subpath == 'views/' OR $base.$subpath == 'models/') {
 			if (is_file(APPPATH.$base.$subdir.$file_ext)) return array(APPPATH.$base.$subdir, $file);
-			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$subpath}");
+			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$subdir}");
 		}
 		
 		return array(FALSE, $file);	
