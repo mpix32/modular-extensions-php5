@@ -19,7 +19,7 @@ require BASEPATH.'libraries/Loader'.EXT;
  * Install this file as application/libraries/Controller.php
  *
  * @copyright	Copyright (c) Wiredesignz 2009-09-21
- * @version 	5.2.20
+ * @version 	5.2.21
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
