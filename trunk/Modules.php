@@ -156,7 +156,7 @@ class Modules
 		
 		/* cross load from a module if it exists */
 		if ($subpath AND $subpath .= '/' AND is_dir(MODBASE.$subpath)) {
-				$modules[] = MODBASE.$subpath;
+			$modules[] = MODBASE.$subpath;
 		}
 		
 		/* find the file */
