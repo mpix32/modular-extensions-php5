@@ -151,23 +151,27 @@ class Modules
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);
 				
-		/* set the module to search */
-		$modules = ($module AND $module .= '/') ? array(MODBASE.$module) : array();		
+		/* the module to search */
+		$modules = ($module AND $module .= '/') ? array(MODBASE.$module) : array();
+		
+		/* load from application sub-directory */
+		$subdir = ($subpath AND $subpath .= '/') ? $subpath : NULL;	
 		
 		/* cross load from a module if it exists */
-		if ($subpath AND $subpath .= '/' AND is_dir(MODBASE.$subpath)) {
+		if ($subpath AND is_dir(MODBASE.$subpath)) {
 			$modules[] = MODBASE.$subpath;
+			$subpath = '';	
 		}
 		
 		/* find the file */
 		foreach ($modules as $source) {
 			if (is_file($source.$base.$subpath.$file_ext)) return array($source.$base.$subpath, $file);
 		}
-	
+		
 		/* look in application directories for views or models */
-		if ($base == 'views/' OR $base == 'models/') {
-			if (is_file(APPPATH.$base.$subpath.$file_ext)) return array(APPPATH.$base.$subpath, $file);
-			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}");
+		if ($base.$subpath == 'views/' OR $base.$subpath == 'models/') {
+			if (is_file(APPPATH.$base.$subdir.$file_ext)) return array(APPPATH.$base.$subdir, $file);
+			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$subpath}");
 		}
 		
 		return array(FALSE, $file);	
