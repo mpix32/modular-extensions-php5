@@ -16,7 +16,7 @@ spl_autoload_register('Modules::autoload');
  * Install this file as application/libraries/Modules.php
  *
  * @copyright	Copyright (c) Wiredesignz 2009-09-22
- * @version 	5.2.22
+ * @version 	5.2.23
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -150,19 +150,18 @@ class Modules
 		
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);		
-		
-		$path AND $path .= '/';
-		
-		/* find the file in another module */
-		if ($path AND is_file(MODBASE.$path.$base.$file_ext)) return array(MODBASE.$path.$base, $file);
-		
-		/* search module(s) */
-		$modules = ($module AND $module .= '/') ? array(MODBASE.$module) : array();
-		foreach ($modules as $source) {
-			if (is_file($source.$base.$path.$file_ext)) return array($source.$base.$path, $file);
+
+		/* is the file in another module? */
+		if (($path && $path .= '/') AND is_file(MODBASE.$path.$base.$file_ext)) {
+			return array(MODBASE.$path.$base, $file);
 		}
 		
-		/* look in application directories for views or models */
+		/* is the file in the current module? */
+		if (($module && $module .= '/') AND is_file(MODBASE.$module.$base.$path.$file_ext)) {
+			return array(MODBASE.$module.$base.$path, $file);
+		}
+
+		/* is the file in application directories? */
 		if ($base == 'views/' OR $base == 'models/') {
 			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);
 			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$path}");
