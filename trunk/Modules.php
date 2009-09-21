@@ -15,8 +15,8 @@ spl_autoload_register('Modules::autoload');
  *
  * Install this file as application/libraries/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-09-21
- * @version 	5.2.21
+ * @copyright	Copyright (c) Wiredesignz 2009-09-22
+ * @version 	5.2.22
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -136,42 +136,36 @@ class Modules
 
 	/** 
 	* Find a file
-	* Scans for files located within application/modules directory.
+	* Scans for files located within modules directories.
 	* Also scans application directories for models and views.
-	* Generates fatal error on file not found.
+	* Generates fatal error if file not found.
 	**/
-	public static function find($file, $module, $base, $subpath = NULL) {
+	public static function find($file, $module, $base, $path = NULL) {
 		
 		/* is there a path in the filename? */
 		if (($pos = strrpos($file, '/')) !== FALSE) {
-			$subpath = substr($file, 0, $pos);
+			$path = substr($file, 0, $pos);
 			$file = substr($file, $pos + 1);
 	    }
 		
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
-		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);
-				
-		/* the module to search */
+		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);		
+		
+		$path AND $path .= '/';
+		
+		/* find the file in another module */
+		if ($path AND is_file(MODBASE.$path.$base.$file_ext)) return array(MODBASE.$path.$base, $file);
+		
+		/* search module(s) */
 		$modules = ($module AND $module .= '/') ? array(MODBASE.$module) : array();
-		
-		/* load from application sub-directory */
-		$subdir = ($subpath AND $subpath .= '/') ? $subpath : NULL;	
-		
-		/* cross load from a module if it exists */
-		if ($subpath AND is_dir(MODBASE.$subpath)) {
-			$modules[] = MODBASE.$subpath;
-			$subpath = '';	
-		}
-		
-		/* find the file */
 		foreach ($modules as $source) {
-			if (is_file($source.$base.$subpath.$file_ext)) return array($source.$base.$subpath, $file);
+			if (is_file($source.$base.$path.$file_ext)) return array($source.$base.$path, $file);
 		}
 		
 		/* look in application directories for views or models */
-		if ($base.$subpath == 'views/' OR $base.$subpath == 'models/') {
-			if (is_file(APPPATH.$base.$subdir.$file_ext)) return array(APPPATH.$base.$subdir, $file);
-			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$subdir}");
+		if ($base == 'views/' OR $base == 'models/') {
+			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);
+			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$path}");
 		}
 		
 		return array(FALSE, $file);	
