@@ -15,7 +15,7 @@ spl_autoload_register('Modules::autoload');
  *
  * Install this file as application/libraries/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-09-22
+ * @copyright	Copyright (c) Wiredesignz 2009-09-23
  * @version 	5.2.23
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -147,17 +147,17 @@ class Modules
 			$path = substr($file, 0, $pos);
 			$file = substr($file, $pos + 1);
 	    }
-		
+			
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);		
 
 		/* is the file in another module? */
-		if (($path && $path .= '/') AND is_file(MODBASE.$path.$base.$file_ext)) {
+		if (($path AND $path .= '/') AND is_file(MODBASE.$path.$base.$file_ext)) {
 			return array(MODBASE.$path.$base, $file);
 		}
 		
 		/* is the file in the current module? */
-		if (($module && $module .= '/') AND is_file(MODBASE.$module.$base.$path.$file_ext)) {
+		if (($module AND $module .= '/') AND is_file(MODBASE.$module.$base.$path.$file_ext)) {
 			return array(MODBASE.$module.$base.$path, $file);
 		}
 
