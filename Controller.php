@@ -242,10 +242,11 @@ class Loader extends CI_Loader
 
 		Modules::load_file($model, $path);
 		$model = ucfirst($model);
-		CI::$APP->$_alias = new $model();
-		$this->_ci_models[] = $_alias;
 		
-		CI::$APP->$_alias->_assign_libraries();
+		CI::$APP->$_alias = new $model();
+		$this->_ci_assign_to_models();
+		
+		$this->_ci_models[] = $_alias;
 		return CI::$APP->$_alias;
 	}
 
