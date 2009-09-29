@@ -141,7 +141,7 @@ class Modules
 	* Also scans application directories for models and views.
 	* Generates fatal error if file not found.
 	**/
-	public static function find($file, $module, $base, $path = NULL) {
+	public static function find($file, $module, $base, $path = '') {
 		
 		/* is there a path in the filename? */
 		if (($pos = strrpos($file, '/')) !== FALSE) {
@@ -152,11 +152,11 @@ class Modules
 		$subpath = '';
 		
 		/* is there a subpath in the path? */
-		if (strpos($path, '/')) {
-			list($path, $subpath) = explode('/', $path);
-			$subpath .= '/';
+		if (($pos = strrpos($path, '/')) !== FALSE) {
+			$subpath = substr($path, $pos + 1).'/';
+			$path = substr($path, 0, $pos);
 		}
-		
+			
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);		
 
@@ -172,7 +172,7 @@ class Modules
 
 		/* is the file in application directories? */
 		if ($base == 'views/' OR $base == 'models/') {
-			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);
+			if (is_file(APPPATH.$base.$path.$subpath.$file_ext)) return array(APPPATH.$base.$path.$subpath, $file);
 			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$path}");
 		}
 
