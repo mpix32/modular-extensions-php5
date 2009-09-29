@@ -46,6 +46,7 @@ class Modules
 	* Output from module is buffered and returned.
 	**/
 	public static function run($module) {
+		
 		$method = 'index';
 		
 		if(($pos = strrpos($module, '/')) != FALSE) {
@@ -54,9 +55,9 @@ class Modules
 		}
 	
 		$controller = end(explode('/', $module));
-		$module_controller = ($controller == $module) ? $controller : $module.'/'.$controller;
+		if ($controller != $module) $controller = $module.'/'.$controller;
 		
-		if($class = self::load($module_controller)) {
+		if($class = self::load($controller)) {
 			
 			if (method_exists($class, $method))	{
 				ob_start();
@@ -148,12 +149,20 @@ class Modules
 			$file = substr($file, $pos + 1);
 	    }
 			
+		$subpath = '';
+		
+		/* is there a subpath in the path? */
+		if (strpos($path, '/')) {
+			list($path, $subpath) = explode('/', $path);
+			$subpath .= '/';
+		}
+		
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);		
 
 		/* is the file in another module? */
-		if (($path AND $path .= '/') AND is_file(MODBASE.$path.$base.$file_ext)) {
-			return array(MODBASE.$path.$base, $file);
+		if (($path AND $path .= '/') AND is_file(MODBASE.$path.$base.$subpath.$file_ext)) {
+			return array(MODBASE.$path.$base.$subpath, $file);
 		}
 		
 		/* is the file in the current module? */
@@ -166,7 +175,7 @@ class Modules
 			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);
 			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$path}");
 		}
-		
+
 		return array(FALSE, $file);	
 	}
 }
