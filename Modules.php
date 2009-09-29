@@ -147,7 +147,7 @@ class Modules
 		if (($pos = strrpos($file, '/')) !== FALSE) {
 			$path = substr($file, 0, $pos);
 			$file = substr($file, $pos + 1);
-	    }
+		}
 			
 		$subpath = '';
 		
