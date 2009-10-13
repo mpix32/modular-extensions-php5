@@ -16,7 +16,7 @@ spl_autoload_register('Modules::autoload');
  * Install this file as application/libraries/Modules.php
  *
  * @copyright	Copyright (c) Wiredesignz 2009-10-15
- * @version 	5.2.24
+ * @version 	5.2.25
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -188,12 +188,10 @@ class Modules
 		}
 
 		if ( ! isset(self::$routes[$module])) return;
-		if ($uri == 'default_controller') return explode('/', self::$routes[$module]['default_controller']);
 			
 		/* parse module routes */
 		foreach (self::$routes[$module] as $key => $val) {						
-			
-			if ($key == 'default_controller') continue;			
+					
 			$key = str_replace(':any', '.+', str_replace(':num', '[0-9]+', $key));
 			
 			if (preg_match('#^'.$key.'$#', $uri)) {							
@@ -201,7 +199,7 @@ class Modules
 					$val = preg_replace('#^'.$key.'$#', $val, $uri);
 				}
 								
-				return explode('/', $val);
+				return array_merge(array($module), explode('/', $val));
 			}
 		}
 	}

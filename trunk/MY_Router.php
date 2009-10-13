@@ -21,7 +21,7 @@ require_once 'Modules'.EXT;
  * Install this file as application/libraries/MY_Router.php
  *
  * @copyright	Copyright (c) Wiredesignz 2009-10-15
- * @version 	5.2.24
+ * @version 	5.2.25
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ class MY_Router extends CI_Router
 		return $this->module;
 	}
 	
-	public function _validate_request($segments) {
+	public function _validate_request($segments) {		
 		return $this->locate($segments);
 	}
 	
@@ -60,19 +60,19 @@ class MY_Router extends CI_Router
 		$this->module = '';
 		$this->directory = '';
 		
-		/* pad the segment array */
-		list($module, $directory, $controller) = array_pad($segments, 3, NULL);
+		/* use module route if available */
+		if ($route = Modules::parse_routes($segments[0], implode('/', $segments))) {
+			$segments = $route;
+		}
 	
+		/* get the segments array elements */
+		list($module, $directory, $controller) = array_pad($segments, 3, NULL);
+
 		/* module exists? */
 		if ($module AND is_dir($source = MODBASE.$module.'/controllers/')) {
 			
 			$this->module = $module;
 			$this->directory = MODOFFSET.$module.'/controllers/';
-
-			/* use module route if available */
-			if ($route = Modules::parse_routes($module, implode('/', array_slice($segments, 1)))) {
-				return $route;
-			}
 			
 			/* module sub-controller exists? */
 			if($directory AND is_file($source.$directory.EXT)) {
@@ -98,11 +98,6 @@ class MY_Router extends CI_Router
 			/* module controller exists? */			
 			if(is_file($source.$module.EXT)) {
 				return $segments;
-			}
-			
-			/* use module default_controller if available */
-			if ($route = Modules::parse_routes($module, 'default_controller')) {
-				return $route;
 			}
 		}
 
