@@ -184,7 +184,7 @@ class Modules
 		
 		/* load the route file */
 		if ( ! isset(self::$routes[$module]) AND is_file(MODBASE.$module.'/config/routes'.EXT)) {
-			self::$routes[$module] = Modules::load_file('routes', MODBASE.$module.'/config/', 'route');
+			self::$routes[$module] = self::load_file('routes', MODBASE.$module.'/config/', 'route');
 		}
 
 		if ( ! isset(self::$routes[$module])) return;
