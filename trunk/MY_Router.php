@@ -6,6 +6,9 @@ define('MODBASE', APPPATH.'modules/');
 /* define the offset from application/controllers */
 define('MODOFFSET', '../modules/');
 
+/* load the modules class */
+require_once 'Modules'.EXT;
+
 /**
  * Modular Extensions - PHP5
  *
@@ -17,8 +20,8 @@ define('MODOFFSET', '../modules/');
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-09-30
- * @version 	5.2.23
+ * @copyright	Copyright (c) Wiredesignz 2009-10-15
+ * @version 	5.2.24
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +51,6 @@ class MY_Router extends CI_Router
 	}
 	
 	public function _validate_request($segments) {
-
-		/* locate the module controller */
 		return $this->locate($segments);
 	}
 	
@@ -67,7 +68,12 @@ class MY_Router extends CI_Router
 			
 			$this->module = $module;
 			$this->directory = MODOFFSET.$module.'/controllers/';
-					
+
+			/* use module route if available */
+			if ($route = $this->_parse_module_routes($module, implode('/', array_slice($segments, 1)))) {
+				return $route;
+			}
+			
 			/* module sub-controller exists? */
 			if($directory AND is_file($source.$directory.EXT)) {
 				return array_slice($segments, 1);
@@ -93,9 +99,40 @@ class MY_Router extends CI_Router
 			if(is_file($source.$module.EXT)) {
 				return $segments;
 			}
+			
+			/* use module default_controller if available */
+			if ($route = $this->_parse_module_routes($module, 'default_controller')) {
+				return $route;
+			}
 		}
 
 		/* not a module controller */
 		return parent::_validate_request($segments);
+	}
+	
+	/** Load module routes **/
+	private function _parse_module_routes($module, $uri) {
+		static $routes;
+		if ( ! isset($routes[$module]) AND is_file(MODBASE.$module.'/config/routes'.EXT)) {
+			$routes[$module] = Modules::load_file('routes', MODBASE.$module.'/config/', 'route');
+		}
+
+		if ( ! isset($routes[$module])) return;
+		if ($uri == 'default_controller') return explode('/', $routes[$module]['default_controller']);
+			
+		/* parse module routes */
+		foreach ($routes[$module] as $key => $val) {						
+			
+			if ($key == 'default_controller') continue;			
+			$key = str_replace(':any', '.+', str_replace(':num', '[0-9]+', $key));
+			
+			if (preg_match('#^'.$key.'$#', $uri)) {							
+				if (strpos($val, '$') !== FALSE AND strpos($key, '(') !== FALSE) {
+					$val = preg_replace('#^'.$key.'$#', $val, $uri);
+				}
+				
+				return explode('/', $val);
+			}
+		}
 	}
 }
