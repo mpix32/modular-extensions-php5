@@ -70,7 +70,7 @@ class MY_Router extends CI_Router
 			$this->directory = MODOFFSET.$module.'/controllers/';
 
 			/* use module route if available */
-			if ($route = $this->_parse_module_routes($module, implode('/', array_slice($segments, 1)))) {
+			if ($route = Modules::parse_routes($module, implode('/', array_slice($segments, 1)))) {
 				return $route;
 			}
 			
@@ -101,38 +101,12 @@ class MY_Router extends CI_Router
 			}
 			
 			/* use module default_controller if available */
-			if ($route = $this->_parse_module_routes($module, 'default_controller')) {
+			if ($route = Modules::parse_routes($module, 'default_controller')) {
 				return $route;
 			}
 		}
 
 		/* not a module controller */
 		return parent::_validate_request($segments);
-	}
-	
-	/** Load module routes **/
-	private function _parse_module_routes($module, $uri) {
-		static $routes;
-		if ( ! isset($routes[$module]) AND is_file(MODBASE.$module.'/config/routes'.EXT)) {
-			$routes[$module] = Modules::load_file('routes', MODBASE.$module.'/config/', 'route');
-		}
-
-		if ( ! isset($routes[$module])) return;
-		if ($uri == 'default_controller') return explode('/', $routes[$module]['default_controller']);
-			
-		/* parse module routes */
-		foreach ($routes[$module] as $key => $val) {						
-			
-			if ($key == 'default_controller') continue;			
-			$key = str_replace(':any', '.+', str_replace(':num', '[0-9]+', $key));
-			
-			if (preg_match('#^'.$key.'$#', $uri)) {							
-				if (strpos($val, '$') !== FALSE AND strpos($key, '(') !== FALSE) {
-					$val = preg_replace('#^'.$key.'$#', $val, $uri);
-				}
-				
-				return explode('/', $val);
-			}
-		}
 	}
 }
