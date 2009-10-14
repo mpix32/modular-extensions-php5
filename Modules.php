@@ -198,8 +198,8 @@ class Modules
 				if (strpos($val, '$') !== FALSE AND strpos($key, '(') !== FALSE) {
 					$val = preg_replace('#^'.$key.'$#', $val, $uri);
 				}
-								
-				return array_merge(array($module), explode('/', $val));
+
+				return explode('/', $module.'/'.$val);
 			}
 		}
 	}
