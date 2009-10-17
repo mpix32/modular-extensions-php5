@@ -20,8 +20,8 @@ require_once 'Modules'.EXT;
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-10-15
- * @version 	5.2.25
+ * @copyright	Copyright (c) Wiredesignz 2009-10-20
+ * @version 	5.2.26
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

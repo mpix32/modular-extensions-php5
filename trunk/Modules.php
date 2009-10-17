@@ -15,8 +15,8 @@ spl_autoload_register('Modules::autoload');
  *
  * Install this file as application/libraries/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-10-15
- * @version 	5.2.25
+ * @copyright	Copyright (c) Wiredesignz 2009-10-20
+ * @version 	5.2.26
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,7 @@ spl_autoload_register('Modules::autoload');
 class Modules
 {
 	public static $routes, $registry;
+	public static $locations = array(MODBASE);
 	
 	/**
 	* Run a module controller method
@@ -141,39 +142,33 @@ class Modules
 	* Also scans application directories for models and views.
 	* Generates fatal error if file not found.
 	**/
-	public static function find($file, $module, $base, $path = '') {
+	public static function find($file, $module, $base, $lang = '') {
 		
-		/* is there a path in the filename? */
-		if (($pos = strrpos($file, '/')) !== FALSE) {
-			$path = substr($file, 0, $pos);
-			$file = substr($file, $pos + 1);
-		}
-			
-		$subpath = '';
+		/* get an array as (filename, subpath, path, sub-directory and/or module, ...) */
+		$segments = array_pad(array_reverse(preg_split('~/~', $file, -1, PREG_SPLIT_NO_EMPTY)), 3, NULL);		
 		
-		/* is there a subpath in the path? */
-		if (($pos = strrpos($path, '/')) !== FALSE) {
-			$subpath = substr($path, $pos + 1).'/';
-			$path = substr($path, 0, $pos);
-		}
-			
+		$file = array_shift($segments);
+		if ($base == 'language/') $segments = array_reverse($segments);
+		list($subpath, $path) = $segments;
+		
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
-		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);		
-
-		/* is the file in another module? */
-		if (($path AND $path .= '/') AND is_file(MODBASE.$path.$base.$subpath.$file_ext)) {
-			return array(MODBASE.$path.$base.$subpath, $file);
-		}
+		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);
 		
-		/* is the file in the current module? */
-		if (($module AND $module .= '/') AND is_file(MODBASE.$module.$base.$path.$file_ext)) {
-			return array(MODBASE.$module.$base.$path, $file);
+		$path && $module = $path;
+		
+		/* is the file in a module? */
+		if ($module && $module .= '/') {
+			foreach (Modules::$locations as $location) {
+				$location = $location.$module.$base.ltrim($lang.'/','/').ltrim($subpath.'/','/');
+				if (is_file($location.$file_ext)) return array($location, $file);
+			}
 		}
 
-		/* is the file in application directories? */
+		/* is the file in the application directories? */
 		if ($base == 'views/' OR $base == 'models/') {
-			if (is_file(APPPATH.$base.$path.$subpath.$file_ext)) return array(APPPATH.$base.$path.$subpath, $file);
-			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$path}");
+			$subpath = ltrim(implode('/', array_reverse($segments)).'/', '/');
+			if (is_file(APPPATH.$base.$subpath.$file_ext)) return array(APPPATH.$base.$subpath, $file);
+			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$subpath}");
 		}
 
 		return array(FALSE, $file);	

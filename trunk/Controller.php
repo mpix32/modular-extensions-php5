@@ -1,7 +1,7 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
 /* load the core loader class */
-require BASEPATH.'libraries/Loader'.EXT;
+require_once BASEPATH.'libraries/Loader'.EXT;
 
 /**
  * Modular Extensions - PHP5
@@ -15,8 +15,8 @@ require BASEPATH.'libraries/Loader'.EXT;
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-10-15
- * @version 	5.2.25
+ * @copyright	Copyright (c) Wiredesignz 2009-10-20
+ * @version 	5.2.26
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ class CI extends CI_Base
 		
 		parent::__construct();
 		
-		/* assign CI instance */
+		/* assign the application instance */
 		self::$APP = $this;
 		
 		/* assign the core loader */
@@ -77,8 +77,7 @@ class Loader extends CI_Loader
 	private $_module;
 	
 	public function __construct() {
-		$this->load = $this;		
-		
+
 		/* this module name */
 		$this->_module = CI::$APP->router->fetch_module();
 		
@@ -89,37 +88,8 @@ class Loader extends CI_Loader
 	}
 	
 	/** Load a module config file **/
-	public function config($file = '', $use_sections = FALSE) {
-		($file == '') AND $file = 'config';
-
-		if (in_array($file, CI::$APP->config->is_loaded, TRUE))
-			return CI::$APP->config->item($file);
-
-		list($path, $file) = Modules::find($file, $this->_module, 'config/');
-		
-		if ($path === FALSE) {
-			parent::config($file, $use_sections);					
-			return CI::$APP->config->item($file);
-		}  
-		
-		if ($config = Modules::load_file($file, $path, 'config')) {
-			
-			/* reference to the config array */
-			$current_config =& CI::$APP->config->config;
-
-			if ($use_sections === TRUE)	{
-				if (isset($current_config[$file])) {
-					$current_config[$file] = array_merge($current_config[$file], $config);
-				} else {
-					$current_config[$file] = $config;
-				}
-			} else {
-				$current_config = array_merge($current_config, $config);
-			}
-			CI::$APP->config->is_loaded[] = $file;
-			unset($config);
-			return CI::$APP->config->item($file);
-		}
+	public function config($file = '', $use_sections = FALSE, $fail_gracefully = FALSE) {
+		return CI::$APP->config->load($file, $use_sections, $fail_gracefully);
 	}
 
 	/** Load the database drivers **/
@@ -161,24 +131,7 @@ class Loader extends CI_Loader
 
 	/** Load a module language file **/
 	public function language($langfile, $lang = '')	{
-		$deft_lang = CI::$APP->config->item('language');
-		$idiom = ($lang == '') ? $deft_lang : $lang;
-	
-		if (in_array($langfile.'_lang'.EXT, CI::$APP->lang->is_loaded, TRUE)) 
-			return CI::$APP->lang;
-		
-		list($path, $_langfile) = Modules::find($langfile.'_lang', $this->_module, 'language/', $idiom);
-
-		if ($path === FALSE) {
-			parent::language($langfile, $lang);
-		} else {
-			if($lang = Modules::load_file($_langfile, $path, 'lang')) {
-				CI::$APP->lang->language = array_merge(CI::$APP->lang->language, $lang);
-				CI::$APP->lang->is_loaded[] = $langfile.'_lang'.EXT;
-				unset($lang);
-			}
-		}
-		return CI::$APP->lang;
+		return CI::$APP->lang->load($langfile, $lang);
 	}
 
 	/** Load a module library **/
@@ -302,7 +255,9 @@ class Loader extends CI_Loader
 	}
 	
 	/** Autload items **/
-	public function _ci_autoloader($autoload, $path = FALSE) {		
+	public function _ci_autoloader($autoload) {		
+		
+		$path = FALSE;
 		
 		if ($this->_module)
 			list($path, $file) = Modules::find('autoload', $this->_module, 'config/');
@@ -374,9 +329,13 @@ class Controller
 		/* use the MX_Loader extension if it exists */
 		$this->load = (class_exists('MX_Loader', FALSE)) ? new MX_Loader() : new Loader();
 		
-		/* reset the application loader */
-		(is_a(CI::$APP->load, 'Loader')) OR CI::$APP->load = $this->load;
-		
+		/* reset these application object_vars for modules */
+		if ( ! is_a(CI::$APP->load, 'Loader')) {
+			CI::$APP->load = $this->load;
+			CI::$APP->config = new MX_Config();
+			CI::$APP->lang = new MX_Language();
+		}
+		 
 		$class = strtolower(get_class($this));
 		log_message('debug', ucfirst($class)." Controller Initialized");
 		
@@ -389,6 +348,76 @@ class Controller
 	
 	public function __get($var) {
 		return CI::$APP->$var;
+	}
+}
+
+class MX_Config extends CI_Config 
+{	
+	public function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE) {
+		($file == '') AND $file = 'config';
+
+		if (in_array($file, $this->is_loaded, TRUE))
+			return $this->item($file);
+
+		$_module = CI::$APP->router->fetch_module();
+		list($path, $file) = Modules::find($file, $_module, 'config/');
+		
+		if ($path === FALSE) {
+			parent::load($file, $use_sections, $fail_gracefully);					
+			return $this->item($file);
+		}  
+		
+		if ($config = Modules::load_file($file, $path, 'config')) {
+			
+			/* reference to the config array */
+			$current_config =& $this->config;
+
+			if ($use_sections === TRUE)	{
+				if (isset($current_config[$file])) {
+					$current_config[$file] = array_merge($current_config[$file], $config);
+				} else {
+					$current_config[$file] = $config;
+				}
+			} else {
+				$current_config = array_merge($current_config, $config);
+			}
+			$this->is_loaded[] = $file;
+			unset($config);
+			return $this->item($file);
+		}
+	}
+}
+
+class MX_Language extends CI_Language
+{
+	public function load($langfile, $lang = '')	{
+		if (is_array($langfile)) 
+			return $this->load_multi($langfile);
+			
+		$deft_lang = CI::$APP->config->item('language');
+		$idiom = ($lang == '') ? $deft_lang : $lang;
+	
+		if (in_array($langfile.'_lang'.EXT, $this->is_loaded, TRUE))
+			return $this;
+		
+		$_module = CI::$APP->router->fetch_module();
+		list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/', $idiom);
+
+		if ($path === FALSE) {
+			parent::load($langfile, $lang);
+		} else {
+			if($lang = Modules::load_file($_langfile, $path, 'lang')) {
+				$this->language = array_merge($this->language, $lang);
+				$this->is_loaded[] = $langfile.'_lang'.EXT;
+				unset($lang);
+			}
+		}
+		return $this;
+	}
+
+	/** Load an array of language files **/
+	private function load_multi($languages) {
+		foreach ($languages as $_langfile) $this->load($_langfile);	
 	}
 }
 
