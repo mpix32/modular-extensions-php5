@@ -163,7 +163,7 @@ class Modules
 		}
 
 		/* is the file in a module directory? */
-		if ( ! $path AND $subpath) {
+		if ($subpath AND ! $path) {
 			foreach (Modules::$locations as $location) {
 				$location = $location.$subpath.'/'.$base.ltrim($lang.'/','/');
 				if (is_file($location.$file_ext)) return array($location, $file);
