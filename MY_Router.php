@@ -1,13 +1,12 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
-/* define the modules base path */
-define('MODBASE', APPPATH.'modules/');
-
-/* define the offset from application/controllers */
-define('MODOFFSET', '../modules/');
-
 /* load the modules class */
 require_once 'Modules'.EXT;
+
+/* define the module locations and offset */
+Modules::$locations = array(
+	APPPATH.'modules/'	=> '../modules/',
+	);
 
 /**
  * Modular Extensions - PHP5
@@ -68,39 +67,42 @@ class MY_Router extends CI_Router
 		/* get the segments array elements */
 		list($module, $directory, $controller) = array_pad($segments, 3, NULL);
 
-		/* module exists? */
-		if ($module AND is_dir($source = MODBASE.$module.'/controllers/')) {
-			
-			$this->module = $module;
-			$this->directory = MODOFFSET.$module.'/controllers/';
-			
-			/* module sub-controller exists? */
-			if($directory AND is_file($source.$directory.EXT)) {
-				return array_slice($segments, 1);
-			}
+		foreach (Modules::$locations as $location => $offset) {
+		
+			/* module exists? */
+			if (is_dir($source = $location.$module.'/controllers/')) {
 				
-			/* module sub-directory exists? */
-			if($directory AND is_dir($module_subdir = $source.$directory.'/')) {
-						
-				$this->directory .= $directory.'/';
-			
-				/* module sub-directory sub-controller exists? */
-				if($controller AND is_file($module_subdir.$controller.EXT))	{
-					return array_slice($segments, 2);
-				}
-
-				/* module sub-directory controller exists? */
-				if(is_file($module_subdir.$directory.EXT)) {
+				$this->module = $module;
+				$this->directory = $offset.$module.'/controllers/';
+				
+				/* module sub-controller exists? */
+				if($directory AND is_file($source.$directory.EXT)) {
 					return array_slice($segments, 1);
 				}
-			}
-		
-			/* module controller exists? */			
-			if(is_file($source.$module.EXT)) {
-				return $segments;
+					
+				/* module sub-directory exists? */
+				if($directory AND is_dir($module_subdir = $source.$directory.'/')) {
+							
+					$this->directory .= $directory.'/';
+				
+					/* module sub-directory sub-controller exists? */
+					if($controller AND is_file($module_subdir.$controller.EXT))	{
+						return array_slice($segments, 2);
+					}
+	
+					/* module sub-directory controller exists? */
+					if(is_file($module_subdir.$directory.EXT)) {
+						return array_slice($segments, 1);
+					}
+				}
+			
+				/* module controller exists? */			
+				if(is_file($source.$module.EXT)) {
+					return $segments;
+				}
 			}
 		}
-
+		
 		/* not a module controller */
 		return parent::_validate_request($segments);
 	}

@@ -39,8 +39,7 @@ spl_autoload_register('Modules::autoload');
 
 class Modules
 {
-	public static $routes, $registry;
-	public static $locations = array(MODBASE);
+	public static $routes, $registry, $locations;
 	
 	/**
 	* Run a module controller method
@@ -156,7 +155,7 @@ class Modules
 		
 		/* is the file in a module sub-directory? */
 		if ($module OR $path && $module = $path) {
-			foreach (Modules::$locations as $location) {
+			foreach (Modules::$locations as $location => $offset) {
 				$location = $location.$module.'/'.$base.ltrim($lang.'/'.$subpath.'/','/');
 				if (is_file($location.$file_ext)) return array($location, $file);
 			}
@@ -164,7 +163,7 @@ class Modules
 
 		/* is the file in a module directory? */
 		if ($subpath AND ! $path) {
-			foreach (Modules::$locations as $location) {
+			foreach (Modules::$locations as $location => $offset) {
 				$location = $location.$subpath.'/'.$base.ltrim($lang.'/','/');
 				if (is_file($location.$file_ext)) return array($location, $file);
 			}
@@ -184,8 +183,9 @@ class Modules
 	public static function parse_routes($module, $uri) {
 		
 		/* load the route file */
-		if ( ! isset(self::$routes[$module]) AND is_file(MODBASE.$module.'/config/routes'.EXT)) {
-			self::$routes[$module] = self::load_file('routes', MODBASE.$module.'/config/', 'route');
+		if ( ! isset(self::$routes[$module])) {
+			if (list($path) = self::find('routes', $module, 'config/') AND $path)
+				self::$routes[$module] = self::load_file('routes', $path, 'route');
 		}
 
 		if ( ! isset(self::$routes[$module])) return;
