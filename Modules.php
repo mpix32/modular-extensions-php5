@@ -144,27 +144,33 @@ class Modules
 	**/
 	public static function find($file, $module, $base, $lang = '') {
 		
-		/* get an array as (filename, subpath, path, sub-directory and/or module, ...) */
-		$segments = array_pad(array_reverse(preg_split('~/~', $file, -1, PREG_SPLIT_NO_EMPTY)), 3, NULL);		
-		
+		/* get an array as (file, sub-directory, module, ...) */
+		$segments = array_pad(array_reverse(explode('/', $file, 3)), 3, NULL);		
+
 		$file = array_shift($segments);
-		if ($base == 'language/') $segments = array_reverse($segments);
-		list($subpath, $path) = $segments;
-		
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);
 		
-		$path && $module = $path;
+		if ($base == 'language/') $segments = array_reverse($segments);
+		list($subpath, $path) = $segments;
 		
-		/* is the file in a module? */
-		if ($module && $module .= '/') {
+		/* is the file in a module sub-directory? */
+		if ($module OR $path && $module = $path) {
 			foreach (Modules::$locations as $location) {
-				$location = $location.$module.$base.ltrim($lang.'/','/').ltrim($subpath.'/','/');
+				$location = $location.$module.'/'.$base.ltrim($lang.'/'.$subpath.'/','/');
 				if (is_file($location.$file_ext)) return array($location, $file);
 			}
 		}
 
-		/* is the file in the application directories? */
+		/* is the file in a module directory? */
+		if ( ! $path AND $subpath) {
+			foreach (Modules::$locations as $location) {
+				$location = $location.$subpath.'/'.$base.ltrim($lang.'/','/');
+				if (is_file($location.$file_ext)) return array($location, $file);
+			}
+		}
+
+		/* is the file in an application directory? */
 		if ($base == 'views/' OR $base == 'models/') {
 			$subpath = ltrim(implode('/', array_reverse($segments)).'/', '/');
 			if (is_file(APPPATH.$base.$subpath.$file_ext)) return array(APPPATH.$base.$subpath, $file);
