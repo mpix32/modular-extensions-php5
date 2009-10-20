@@ -156,12 +156,13 @@ class Modules
 			list($subpath, $path) = $segments;
 			
 			$lang && $lang .= '/';
+			$path && $module = $path
 			$subpath && $subpath .= '/';
 			
 			foreach (Modules::$locations as $location => $offset) {
 				
 				/* is the file in a module sub-directory? */
-				if ($module OR $path && $module = $path) {
+				if ($module) {
 					$fullpath = $location.$module.'/'.$base.$lang.$subpath;
 					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 				}
