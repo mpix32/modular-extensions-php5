@@ -155,18 +155,21 @@ class Modules
 			if ($base == 'language/') $segments = array_reverse($segments);
 			list($subpath, $path) = $segments;
 			
+			$lang && $lang .= '/';
+			$subpath && $subpath .= '/';
+			
 			foreach (Modules::$locations as $location => $offset) {
 				
 				/* is the file in a module sub-directory? */
 				if ($module OR $path && $module = $path) {
-					$location = $location.$module.'/'.$base.ltrim($lang.'/','/').ltrim($subpath.'/','/');
-					if (is_file($location.$file_ext)) return array($location, $file);
+					$fullpath = $location.$module.'/'.$base.$lang.$subpath;
+					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 				}
 				
 				/* is the file in a module directory? */
 				if ($subpath AND ! $path) {
-					$location = $location.$subpath.'/'.$base.ltrim($lang.'/','/');
-					if (is_file($location.$file_ext)) return array($location, $file);
+					print $fullpath = $location.$subpath.$base.$lang;
+					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 				}
 			}
 		}
