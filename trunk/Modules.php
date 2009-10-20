@@ -144,7 +144,7 @@ class Modules
 	public static function find($file, $module, $base, $lang = '') {
 		
 		/* get an array as (file, sub-directory, module, ...) */
-		$segments = array_pad(array_reverse(explode('/', $file, 4)), 3, NULL);		
+		$segments = array_pad(array_reverse(explode('/', $file)), 3, NULL);		
 
 		$file = array_shift($segments);
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
