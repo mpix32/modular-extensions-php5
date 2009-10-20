@@ -168,7 +168,7 @@ class Modules
 				
 				/* is the file in a module directory? */
 				if ($subpath AND ! $path) {
-					print $fullpath = $location.$subpath.$base.$lang;
+					$fullpath = $location.$subpath.$base.$lang;
 					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 				}
 			}
