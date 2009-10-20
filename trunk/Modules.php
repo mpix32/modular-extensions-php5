@@ -144,36 +144,38 @@ class Modules
 	public static function find($file, $module, $base, $lang = '') {
 		
 		/* get an array as (file, sub-directory, module, ...) */
-		$segments = array_pad(array_reverse(explode('/', $file, 3)), 3, NULL);		
+		$segments = array_pad(array_reverse(explode('/', $file, 4)), 3, NULL);		
 
 		$file = array_shift($segments);
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);
 		
-		if ($base == 'language/') $segments = array_reverse($segments);
-		list($subpath, $path) = $segments;
-		
-		/* is the file in a module sub-directory? */
-		if ($module OR $path && $module = $path) {
+		if (count($segments) == 2) {
+			
+			if ($base == 'language/') $segments = array_reverse($segments);
+			list($subpath, $path) = $segments;
+			
 			foreach (Modules::$locations as $location => $offset) {
-				$location = $location.$module.'/'.$base.ltrim($lang.'/'.$subpath.'/','/');
-				if (is_file($location.$file_ext)) return array($location, $file);
-			}
-		}
-
-		/* is the file in a module directory? */
-		if ($subpath AND ! $path) {
-			foreach (Modules::$locations as $location => $offset) {
-				$location = $location.$subpath.'/'.$base.ltrim($lang.'/','/');
-				if (is_file($location.$file_ext)) return array($location, $file);
+				
+				/* is the file in a module sub-directory? */
+				if ($module OR $path && $module = $path) {
+					$location = $location.$module.'/'.$base.ltrim($lang.'/','/').ltrim($subpath.'/','/');
+					if (is_file($location.$file_ext)) return array($location, $file);
+				}
+				
+				/* is the file in a module directory? */
+				if ($subpath AND ! $path) {
+					$location = $location.$subpath.'/'.$base.ltrim($lang.'/','/');
+					if (is_file($location.$file_ext)) return array($location, $file);
+				}
 			}
 		}
 
 		/* is the file in an application directory? */
 		if ($base == 'views/' OR $base == 'models/') {
-			$subpath = ltrim(implode('/', array_reverse($segments)).'/', '/');
-			if (is_file(APPPATH.$base.$subpath.$file_ext)) return array(APPPATH.$base.$subpath, $file);
-			show_error("Unable to locate the file: {$file_ext} in {$module}{$base}{$subpath}");
+			$path = ltrim(implode('/', array_reverse($segments)).'/', '/');
+			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);
+			show_error("Unable to locate the file: {$file_ext} in {$module}/{$base}{$path}");
 		}
 
 		return array(FALSE, $file);	
