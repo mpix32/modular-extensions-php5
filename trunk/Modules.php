@@ -156,7 +156,7 @@ class Modules
 			list($subpath, $path) = $segments;
 			
 			$lang && $lang .= '/';
-			$path && $module = $path
+			$path && $module = $path;
 			$subpath && $subpath .= '/';
 			
 			foreach (Modules::$locations as $location => $offset) {
