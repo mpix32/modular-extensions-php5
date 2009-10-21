@@ -153,7 +153,7 @@ class Modules
 		$path = ltrim(implode('/', $segments).'/', '/');
 		$module ? $modules[$module] = $path : $modules = array();
 		
-		if ($n = count($segments) == 1) $modules[array_shift($segments)] = '';
+		if (($n = count($segments)) == 1) $modules[array_shift($segments)] = '';
 		if ($n == 2) $modules[array_shift($segments)] = ltrim(implode('/', $segments).'/','/');		
 	
 		foreach (Modules::$locations as $location => $offset) {
