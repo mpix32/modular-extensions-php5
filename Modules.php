@@ -158,11 +158,11 @@ class Modules
 	
 		foreach (Modules::$locations as $location => $offset) {
 					
-				foreach($modules as $module => $subpath) {
-					if (empty($module)) continue;
-					$fullpath = $location.$module.'/'.$base.$lang.$subpath;
-					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
-				}
+			foreach($modules as $module => $subpath) {
+				if (empty($module)) continue;
+				$fullpath = $location.$module.'/'.$base.$lang.$subpath;
+				if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
+			}
 		}
 		
 		/* is the file in an application directory? */
