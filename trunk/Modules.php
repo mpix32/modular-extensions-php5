@@ -152,19 +152,17 @@ class Modules
 		$lang && $lang .= '/';
 		$path = $modules[$module] = ltrim(implode('/', $segments).'/', '/');
 		
-		if (count($segments) == 2) {
+		if (count($segments) == 1) 
+			$modules[array_shift($segments)] = '';
+			
+		if (count($segments) == 2) 
 			$modules[array_shift($segments)] = ltrim(implode('/', $segments).'/','/');
-		}
 		
 		foreach (Modules::$locations as $location => $offset) {
-			
+					
 				foreach($modules as $module => $subpath) {
+					if (empty($module)) continue;
 					$fullpath = $location.$module.'/'.$base.$lang.$subpath;
-					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
-				}
-				
-				if (count($segments) == 1) {
-					$fullpath = $location.$subpath.$base.$lang;
 					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 				}
 		}
