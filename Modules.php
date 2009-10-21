@@ -15,8 +15,8 @@ spl_autoload_register('Modules::autoload');
  *
  * Install this file as application/libraries/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-10-21
- * @version 	5.2.26
+ * @copyright	Copyright (c) Wiredesignz 2009-10-20
+ * @version 	5.2.27
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -142,44 +142,37 @@ class Modules
 	* Generates fatal error if file not found.
 	**/
 	public static function find($file, $module, $base, $lang = '') {
-		
-		/* get an array as (file, sub-directory, module, ...) */
-		$segments = array_pad(array_reverse(explode('/', $file)), 3, NULL);		
+	
+		$segments = array_reverse(explode('/', $file));
 
 		$file = array_shift($segments);
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);
 		
-		if (count($segments) == 2) {
+		$segments = array_reverse($segments);
+		$path = ltrim(implode('/', $segments).'/', '/');
+		if (count($segments) > 1) $module = array_shift($segments);
+		
+		$lang && $lang .= '/';
+		$subpath = ltrim(implode('/', $segments).'/','/');
+		
+		foreach (Modules::$locations as $location => $offset) {
 			
-			if ($base == 'language/') $segments = array_reverse($segments);
-			list($subpath, $path) = $segments;
-			
-			$lang && $lang .= '/';
-			$subpath && $subpath .= '/';
-			$path && $module = $path;
-			
-			foreach (Modules::$locations as $location => $offset) {
-				
-				/* is the file in a module sub-directory? */
 				if ($module) {
 					$fullpath = $location.$module.'/'.$base.$lang.$subpath;
 					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 				}
 				
-				/* is the file in a module directory? */
-				if ($subpath) {
+				if (count($segments) == 1) {
 					$fullpath = $location.$subpath.$base.$lang;
 					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 				}
-			}
 		}
-
+		
 		/* is the file in an application directory? */
 		if ($base == 'views/' OR $base == 'models/') {
-			$path = ltrim(implode('/', array_reverse($segments)).'/', '/');
 			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);
-			show_error("Unable to locate the file: {$file_ext} in {$module}/{$base}{$path}");
+			show_error("Unable to locate the file: {$path}{$file_ext}");
 		}
 
 		return array(FALSE, $file);	
