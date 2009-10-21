@@ -153,13 +153,12 @@ class Modules
 		$path = ltrim(implode('/', $segments).'/', '/');	
 		$module ? $modules[$module] = $path : $modules = array();
 		
-		if (count($segments) > 0) 
+		if ( ! empty($segments)) 
 			$modules[array_shift($segments)] = ltrim(implode('/', $segments).'/','/');		
 
 		foreach (Modules::$locations as $location => $offset) {
 					
 			foreach($modules as $module => $subpath) {
-				if (empty($module)) continue;
 				$fullpath = $location.$module.'/'.$base.$lang.$subpath;
 				if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 			}
