@@ -143,22 +143,22 @@ class Modules
 	**/
 	public static function find($file, $module, $base, $lang = '') {
 	
-		$segments = array_reverse(explode('/', $file));
+		$segments = explode('/', $file);
 
-		$file = array_shift($segments);
+		$file = array_pop($segments);
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);
 		
-		$segments = array_reverse($segments);
-		$path = ltrim(implode('/', $segments).'/', '/');
-		if (count($segments) > 1) $module = array_shift($segments);
-		
 		$lang && $lang .= '/';
-		$subpath = ltrim(implode('/', $segments).'/','/');
+		$path = $modules[$module] = ltrim(implode('/', $segments).'/', '/');
+		
+		if (count($segments) == 2) {
+			$modules[array_shift($segments)] = ltrim(implode('/', $segments).'/','/');
+		}
 		
 		foreach (Modules::$locations as $location => $offset) {
 			
-				if ($module) {
+				foreach($modules as $module => $subpath) {
 					$fullpath = $location.$module.'/'.$base.$lang.$subpath;
 					if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 				}
