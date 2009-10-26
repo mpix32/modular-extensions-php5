@@ -145,7 +145,7 @@ class Modules
 	
 		$segments = explode('/', $file);
 
-		$file = basename(array_pop($segments), EXT);
+		$file = array_pop($segments);
 		$file_ext = strpos($file, '.') ? $file : $file.EXT;
 		if ($base == 'libraries/') $file_ext = ucfirst($file_ext);
 		
