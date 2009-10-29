@@ -60,8 +60,8 @@ class MY_Router extends CI_Router
 		$this->directory = '';
 		
 		/* use module route if available */
-		if ($route = Modules::parse_routes($segments[0], implode('/', $segments))) {
-			$segments = $route;
+		if (isset($segments[0]) AND $routes = Modules::parse_routes($segments[0], implode('/', $segments))) {
+			$segments = $routes;
 		}
 	
 		/* get the segments array elements */
