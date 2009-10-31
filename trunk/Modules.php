@@ -165,7 +165,7 @@ class Modules
 		}
 		
 		/* is the file in an application directory? */
-		if ($base == 'views/' OR $base == 'models/' OR $base == 'forms/') {
+		if ($base == 'views/' OR $base == 'models/') {
 			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);
 			show_error("Unable to locate the file: {$path}{$file_ext}");
 		}
