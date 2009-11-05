@@ -19,8 +19,8 @@ Modules::$locations = array(
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-10-30
- * @version 	5.2.28
+ * @copyright	Copyright (c) Wiredesignz 2009-11-05
+ * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
