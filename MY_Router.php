@@ -6,7 +6,7 @@ require_once 'Modules'.EXT;
 /* define the module locations and offset */
 Modules::$locations = array(
 	APPPATH.'modules/'	=> '../modules/',
-	);
+);
 
 /**
  * Modular Extensions - PHP5
@@ -19,7 +19,7 @@ Modules::$locations = array(
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-05
+ * @copyright	Copyright (c) Wiredesignz 2009-11-14
  * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,7 +40,6 @@ Modules::$locations = array(
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **/
- 
 class MY_Router extends CI_Router
 {
 	private $module;
@@ -50,7 +49,38 @@ class MY_Router extends CI_Router
 	}
 	
 	public function _validate_request($segments) {		
-		return $this->locate($segments);
+		
+		/* locate module controller */
+		if ($located = $this->locate($segments)) return $located;
+		
+		/* application controller exists? */			
+		if(is_file(APPPATH.'controllers/'.$segments[0].EXT)) {
+			return $segments;
+		}		
+	
+		list($directory, $controller) = array_pad($segments, 2, NULL);
+		
+		/* application sub-directory controller exists? */
+		if(is_file(APPPATH.'controllers/'.$directory.'/'.$controller.EXT)) {
+			$this->directory = $directory;
+			return array_slice($segments, 1);
+		}		
+		
+		/* use a default 404 controller */
+		if (isset($this->routes['404']) AND $segments = explode('/', $this->routes['404'])) {
+			
+			/* locate controller in a module? */
+			if ($located = $this->locate($segments)) return $located;
+
+			/* is controller in application? */
+			if (is_file(APPPATH.'controllers/'.$this->routes['404'].EXT)) {
+				if (count($segments) > 1) $this->directory = array_shift($segments);
+				return $segments;
+			}
+		}
+		
+		/* no controller found */
+		show_404();
 	}
 	
 	/** Locate the controller **/
@@ -102,8 +132,5 @@ class MY_Router extends CI_Router
 				}
 			}
 		}
-		
-		/* not a module controller */
-		return parent::_validate_request($segments);
 	}
 }
