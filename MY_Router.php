@@ -19,7 +19,7 @@ Modules::$locations = array(
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-14
+ * @copyright	Copyright (c) Wiredesignz 2009-11-15
  * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -62,8 +62,8 @@ class MY_Router extends CI_Router
 		
 		/* application sub-directory controller exists? */
 		if(is_file(APPPATH.'controllers/'.$directory.'/'.$controller.EXT)) {
-			$this->directory = $directory;
-			return array_slice($segments, 1);
+			$this->directory = array_shift($segments).'/';
+			return $segments;
 		}		
 		
 		/* use a default 404 controller */
@@ -74,7 +74,7 @@ class MY_Router extends CI_Router
 
 			/* is controller in application? */
 			if (is_file(APPPATH.'controllers/'.$this->routes['404'].EXT)) {
-				if (count($segments) > 1) $this->directory = array_shift($segments);
+				if (count($segments) > 1) $this->directory = array_shift($segments).'/';
 				return $segments;
 			}
 		}
