@@ -15,7 +15,7 @@ require_once BASEPATH.'libraries/Loader'.EXT;
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-05
+ * @copyright	Copyright (c) Wiredesignz 2009-11-14
  * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,7 +36,6 @@ require_once BASEPATH.'libraries/Loader'.EXT;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **/
-
 class CI extends CI_Base
 {
 	public static $APP;
@@ -50,15 +49,17 @@ class CI extends CI_Base
 		
 		/* assign the core loader */
 		$this->load = new CI_Loader();
+
+		/* use modular config and language */
+		$this->config = new MX_Config();
+		$this->lang = new MX_Language();
 		
 		/* the core classes */
 		$classes = array(
-			'config'	=> 'Config',
 			'input'		=> 'Input',
 			'benchmark'	=> 'Benchmark',
 			'uri'		=> 'URI',
 			'output'	=> 'Output',
-			'lang'		=> 'Language',
 			'router'	=> 'Router',
 		);
 		
@@ -69,6 +70,9 @@ class CI extends CI_Base
 		
 		/* autoload application items */
 		$this->load->_ci_autoloader();
+		
+		/* re-assign the core loader to use modules */
+		$this->load = (class_exists('MX_Loader', FALSE)) ? new MX_Loader() : new Loader();
 	}
 }
 
@@ -319,6 +323,10 @@ class Loader extends CI_Loader
 	}
 }
 
+if (is_file($location = APPPATH.'libraries/MX_Loader'.EXT)) {
+	include_once $location;
+}
+
 class Controller
 {			
 	public $autoload = array();
@@ -328,13 +336,6 @@ class Controller
 		
 		/* use the MX_Loader extension if it exists */
 		$this->load = (class_exists('MX_Loader', FALSE)) ? new MX_Loader() : new Loader();
-		
-		/* reset these application object_vars for modules */
-		if ( ! is_a(CI::$APP->load, 'Loader')) {
-			CI::$APP->load = $this->load;
-			CI::$APP->config = new MX_Config();
-			CI::$APP->lang = new MX_Language();
-		}
 		 
 		$class = strtolower(get_class($this));
 		log_message('debug', ucfirst($class)." Controller Initialized");
@@ -349,6 +350,10 @@ class Controller
 	public function __get($var) {
 		return CI::$APP->$var;
 	}
+}
+
+if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
+	include_once $location;
 }
 
 class MX_Config extends CI_Config 
@@ -390,7 +395,7 @@ class MX_Config extends CI_Config
 
 class MX_Language extends CI_Language
 {
-	public function load($langfile, $lang = '')	{
+	public function load($langfile, $lang = '', $return = FALSE)	{
 		if (is_array($langfile)) 
 			return $this->load_multi($langfile);
 			
@@ -398,37 +403,28 @@ class MX_Language extends CI_Language
 		$idiom = ($lang == '') ? $deft_lang : $lang;
 	
 		if (in_array($langfile.'_lang'.EXT, $this->is_loaded, TRUE))
-			return $this;
+			return $this->language;
 		
 		$_module = CI::$APP->router->fetch_module();
 		list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/', $idiom);
 
 		if ($path === FALSE) {
-			parent::load($langfile, $lang);
+			if ($lang = parent::load($langfile, $lang, $return)) return $lang;
 		} else {
 			if($lang = Modules::load_file($_langfile, $path, 'lang')) {
+				if ($return) return $lang;
 				$this->language = array_merge($this->language, $lang);
 				$this->is_loaded[] = $langfile.'_lang'.EXT;
 				unset($lang);
 			}
 		}
-		return $this;
+		return $this->language;
 	}
 
 	/** Load an array of language files **/
 	private function load_multi($languages) {
 		foreach ($languages as $_langfile) $this->load($_langfile);	
 	}
-}
-
-/* load MX_Loader extension classes if available */
-if (is_file($location = APPPATH.'libraries/MX_Loader'.EXT)) {
-	include_once $location;
-}
-
-/* load MX_Controller extension classes if available */
-if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
-	include_once $location;
 }
 
 /* create the application object */

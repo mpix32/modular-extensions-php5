@@ -15,7 +15,7 @@ spl_autoload_register('Modules::autoload');
  *
  * Install this file as application/libraries/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-05
+ * @copyright	Copyright (c) Wiredesignz 2009-11-14
  * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,7 +36,6 @@ spl_autoload_register('Modules::autoload');
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **/
-
 class Modules
 {
 	public static $routes, $registry, $locations;
@@ -66,7 +65,7 @@ class Modules
 				$buffer = ob_get_clean();
 				return ($output) ? $output : $buffer;
 			}
-
+			
 			log_message('debug', "Module failed to run: {$module}/{$controller}/{$method}");
 		}
 	}
@@ -87,6 +86,9 @@ class Modules
 		/* find the controller */
 		list($class) = CI::$APP->router->locate($segments);
 
+		/* flag an error if controller cannot be located */
+		if (empty($class)) show_error("Module controller {$module} cannot be located.");
+
 		/* set the module directory */
 		$path = APPPATH.'controllers/'.CI::$APP->router->fetch_directory();
 
@@ -94,8 +96,8 @@ class Modules
 		self::load_file($class, $path);
 		
 		/* create the new controller */
-		$controller = ucfirst($class);
-		$controller = new $controller($params);
+		$class = ucfirst($class);
+		$controller = new $class($params);
 		return $controller;
 	}
 	
@@ -104,7 +106,7 @@ class Modules
 		
 		/* don't autoload CI_ or MY_ prefixed classes */
 		if (strstr($class, 'CI_') OR strstr($class, 'MY_')) return;
-			
+		
 		if(is_file($location = APPPATH.'libraries/'.$class.EXT)) {
 			include_once $location;
 		}		
