@@ -19,7 +19,7 @@ Modules::$locations = array(
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-17
+ * @copyright	Copyright (c) Wiredesignz 2009-11-16
  * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -65,7 +65,6 @@ class MY_Router extends CI_Router
 				return $segments;
 			}
 		}
-		
 		/* no controller found */
 		show_404();
 	}

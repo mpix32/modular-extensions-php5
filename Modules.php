@@ -15,7 +15,7 @@ spl_autoload_register('Modules::autoload');
  *
  * Install this file as application/libraries/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-17
+ * @copyright	Copyright (c) Wiredesignz 2009-11-16
  * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -65,9 +65,8 @@ class Modules
 				$buffer = ob_get_clean();
 				return ($output) ? $output : $buffer;
 			}
-			
-			log_message('debug', "Module failed to run: {$module}/{$controller}/{$method}");
 		}
+		log_message('error', "Module controller failed to run: {$controller}/{$method}");
 	}
 	
 	/** Load a module controller **/
@@ -86,8 +85,8 @@ class Modules
 		/* find the controller */
 		list($class) = CI::$APP->router->locate($segments);
 
-		/* flag an error if controller cannot be located */
-		if (empty($class)) show_error("Module controller {$module} cannot be located.");
+		/* controller cannot be located */
+		if (empty($class)) return;
 
 		/* set the module directory */
 		$path = APPPATH.'controllers/'.CI::$APP->router->fetch_directory();
