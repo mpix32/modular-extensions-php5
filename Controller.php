@@ -15,7 +15,7 @@ require_once BASEPATH.'libraries/Loader'.EXT;
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-16
+ * @copyright	Copyright (c) Wiredesignz 2009-11-17
  * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy

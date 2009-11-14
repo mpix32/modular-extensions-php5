@@ -19,7 +19,7 @@ Modules::$locations = array(
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-16
+ * @copyright	Copyright (c) Wiredesignz 2009-11-17
  * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -101,15 +101,15 @@ class MY_Router extends CI_Router
 				if($directory AND is_dir($module_subdir = $source.$directory.'/')) {
 							
 					$this->directory .= $directory.'/';
+
+					/* module sub-directory controller exists? */
+					if(is_file($module_subdir.$directory.EXT)) {
+						return array_slice($segments, 1);
+					}
 				
 					/* module sub-directory sub-controller exists? */
 					if($controller AND is_file($module_subdir.$controller.EXT))	{
 						return array_slice($segments, 2);
-					}
-	
-					/* module sub-directory controller exists? */
-					if(is_file($module_subdir.$directory.EXT)) {
-						return array_slice($segments, 1);
 					}
 				}
 			
