@@ -5,7 +5,7 @@ require_once 'Modules'.EXT;
 
 /* define the module locations and offset */
 Modules::$locations = array(
-	APPPATH.'modules/'	=> '../modules/',
+	APPPATH.'modules/' => '../modules/',
 );
 
 /**
@@ -19,7 +19,7 @@ Modules::$locations = array(
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-15
+ * @copyright	Copyright (c) Wiredesignz 2009-11-16
  * @version 	5.2.29
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
