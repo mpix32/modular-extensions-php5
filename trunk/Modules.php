@@ -15,8 +15,8 @@ spl_autoload_register('Modules::autoload');
  *
  * Install this file as application/libraries/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-16
- * @version 	5.2.29
+ * @copyright	Copyright (c) Wiredesignz 2009-11-19
+ * @version 	5.2.30
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -90,12 +90,12 @@ class Modules
 
 		/* set the module directory */
 		$path = APPPATH.'controllers/'.CI::$APP->router->fetch_directory();
-
+		
 		/* load the controller class */
 		self::load_file($class, $path);
 		
 		/* create the new controller */
-		$class = ucfirst($class);
+		$class = ucfirst($class).$this->config->item('controller_suffix');
 		$controller = new $class($params);
 		return $controller;
 	}
