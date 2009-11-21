@@ -337,7 +337,7 @@ class Controller
 		/* use the MX_Loader extension if it exists */
 		$this->load = (class_exists('MX_Loader', FALSE)) ? new MX_Loader() : new Loader();
 		 
-		$class = strtolower(get_class($this));
+		$class = strtolower(str_replace($this->config->item('controller_suffix'),'',get_class($this)));
 		log_message('debug', ucfirst($class)." Controller Initialized");
 		
 		/* register this controller */
