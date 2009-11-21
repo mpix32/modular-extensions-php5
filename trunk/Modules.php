@@ -92,10 +92,11 @@ class Modules
 		$path = APPPATH.'controllers/'.CI::$APP->router->fetch_directory();
 		
 		/* load the controller class */
+		$class = $class.CI::$APP->config->item('controller_suffix');
 		self::load_file($class, $path);
 		
 		/* create the new controller */
-		$class = ucfirst($class).CI::$APP->config->item('controller_suffix');
+		$class = ucfirst($class);
 		$controller = new $class($params);
 		return $controller;
 	}
