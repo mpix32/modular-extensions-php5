@@ -95,7 +95,7 @@ class Modules
 		self::load_file($class, $path);
 		
 		/* create the new controller */
-		$class = ucfirst($class).$this->config->item('controller_suffix');
+		$class = ucfirst($class).CI::$APP->config->item('controller_suffix');
 		$controller = new $class($params);
 		return $controller;
 	}
