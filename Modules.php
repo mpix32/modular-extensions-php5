@@ -155,8 +155,9 @@ class Modules
 		$path = ltrim(implode('/', $segments).'/', '/');	
 		$module ? $modules[$module] = $path : $modules = array();
 		
-		if ( ! empty($segments)) 
-			$modules[array_shift($segments)] = ltrim(implode('/', $segments).'/','/');		
+		if ( ! empty($segments)) {
+			$modules[array_shift($segments)] = ltrim(implode('/', $segments).'/','/');
+		}	
 
 		foreach (Modules::$locations as $location => $offset) {
 					
