@@ -15,7 +15,7 @@ require_once BASEPATH.'libraries/Loader'.EXT;
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-24
+ * @copyright	Copyright (c) Wiredesignz 2009-11-30
  * @version 	5.2.30
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -93,7 +93,7 @@ class Loader extends CI_Loader
 	
 	/** Load a module config file **/
 	public function config($file = '', $use_sections = FALSE, $fail_gracefully = FALSE) {
-		return CI::$APP->config->load($file, $use_sections, $fail_gracefully);
+		return CI::$APP->config->load($file, $use_sections, $fail_gracefully, $this->_module);
 	}
 
 	/** Load the database drivers **/
@@ -134,8 +134,8 @@ class Loader extends CI_Loader
 	}
 
 	/** Load a module language file **/
-	public function language($langfile, $lang = '')	{
-		return CI::$APP->lang->load($langfile, $lang);
+	public function language($langfile, $lang = '', $return = FALSE)	{
+		return CI::$APP->lang->load($langfile, $lang, $return, $this->_module);
 	}
 
 	/** Load a module library **/
@@ -358,13 +358,12 @@ if (is_file($location = APPPATH.'libraries/MX_Controller'.EXT)) {
 
 class MX_Config extends CI_Config 
 {	
-	public function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE) {
+	public function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE, $_module = NULL) {
 		($file == '') AND $file = 'config';
 
 		if (in_array($file, $this->is_loaded, TRUE))
 			return $this->item($file);
 
-		$_module = CI::$APP->router->fetch_module();
 		list($path, $file) = Modules::find($file, $_module, 'config/');
 		
 		if ($path === FALSE) {
@@ -395,17 +394,16 @@ class MX_Config extends CI_Config
 
 class MX_Language extends CI_Language
 {
-	public function load($langfile, $lang = '', $return = FALSE)	{
+	public function load($langfile, $lang = '', $return = FALSE, $_module = NULL)	{
 		if (is_array($langfile)) 
 			return $this->load_multi($langfile);
 			
 		$deft_lang = CI::$APP->config->item('language');
 		$idiom = ($lang == '') ? $deft_lang : $lang;
 	
-		if (in_array($langfile.'_lang'.EXT, $this->is_loaded, TRUE))
+		if (in_array($langfile.'_lang', $this->is_loaded, TRUE))
 			return $this->language;
-		
-		$_module = CI::$APP->router->fetch_module();
+	
 		list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/', $idiom);
 
 		if ($path === FALSE) {
@@ -414,7 +412,7 @@ class MX_Language extends CI_Language
 			if($lang = Modules::load_file($_langfile, $path, 'lang')) {
 				if ($return) return $lang;
 				$this->language = array_merge($this->language, $lang);
-				$this->is_loaded[] = $langfile.'_lang'.EXT;
+				$this->is_loaded[] = $langfile.'_lang';
 				unset($lang);
 			}
 		}
