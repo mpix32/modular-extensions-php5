@@ -15,7 +15,7 @@ require_once BASEPATH.'libraries/Loader'.EXT;
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-30
+ * @copyright	Copyright (c) Wiredesignz 2009-11-29
  * @version 	5.2.30
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -364,6 +364,7 @@ class MX_Config extends CI_Config
 		if (in_array($file, $this->is_loaded, TRUE))
 			return $this->item($file);
 
+		$_module || $_module = CI::$APP->router->fetch_module();
 		list($path, $file) = Modules::find($file, $_module, 'config/');
 		
 		if ($path === FALSE) {
@@ -404,6 +405,7 @@ class MX_Language extends CI_Language
 		if (in_array($langfile.'_lang', $this->is_loaded, TRUE))
 			return $this->language;
 	
+		$_module || $_module = CI::$APP->router->fetch_module();
 		list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/', $idiom);
 
 		if ($path === FALSE) {

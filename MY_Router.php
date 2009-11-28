@@ -19,7 +19,7 @@ Modules::$locations = array(
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-30
+ * @copyright	Copyright (c) Wiredesignz 2009-11-29
  * @version 	5.2.30
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
