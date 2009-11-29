@@ -19,7 +19,7 @@ Modules::$locations = array(
  *
  * Install this file as application/libraries/MY_Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-29
+ * @copyright	Copyright (c) Wiredesignz 2009-11-30
  * @version 	5.2.30
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -126,6 +126,6 @@ class MY_Router extends CI_Router
 	}
 	
 	public function set_class($class) {
-		$this->class = ucfirst($class).$this->config->item('controller_suffix');
+		$this->class = $class.$this->config->item('controller_suffix');
 	}
 }
