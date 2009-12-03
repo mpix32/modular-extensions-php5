@@ -15,8 +15,8 @@ spl_autoload_register('Modules::autoload');
  *
  * Install this file as application/libraries/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-30
- * @version 	5.2.30
+ * @copyright	Copyright (c) Wiredesignz 2009-12-03
+ * @version 	5.2.31
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
