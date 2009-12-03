@@ -15,8 +15,8 @@ require_once BASEPATH.'libraries/Loader'.EXT;
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright	Copyright (c) Wiredesignz 2009-11-30
- * @version 	5.2.30
+ * @copyright	Copyright (c) Wiredesignz 2009-12-03
+ * @version 	5.2.31
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -181,7 +181,7 @@ class Loader extends CI_Loader
 		if (is_array($model)) 
 			return $this->models($model);
 
-		($_alias = $object_name) OR $_alias = strtolower(end(explode('/', $model)));
+		($_alias = $object_name) OR $_alias = end(explode('/', $model));
 
 		if (in_array($_alias, $this->_ci_models, TRUE)) 
 			return CI::$APP->$_alias;
