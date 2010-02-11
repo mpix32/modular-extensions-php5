@@ -15,8 +15,8 @@ require_once BASEPATH.'libraries/Loader'.EXT;
  *
  * Install this file as application/libraries/Controller.php
  *
- * @copyright	Copyright (c) Wiredesignz 2010-01-18
- * @version 	5.2.31
+ * @copyright	Copyright (c) Wiredesignz 2010-02-12
+ * @version 	5.2.32
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -97,8 +97,8 @@ class Loader extends CI_Loader
 	}
 
 	/** Load the database drivers **/
-	public function database($params = '', $return = FALSE, $active_record = FALSE) {
-		if (class_exists('CI_DB', FALSE) AND $return == FALSE AND $active_record == FALSE) 
+	public function database($params = '', $return = FALSE, $active_record = NULL) {
+		if (class_exists('CI_DB', FALSE) AND $return == FALSE AND $active_record == NULL) 
 			return;
 
 		require_once BASEPATH.'database/DB'.EXT;
